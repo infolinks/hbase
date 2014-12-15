@@ -35,8 +35,8 @@
 
   <groupId>org.apache.hbase</groupId>
   <artifactId>hbase</artifactId>
-  <packaging>jar</packaging>
-  <version>0.94.24</version>
+  <packaging>bundle</packaging>
+  <version>0.94.24-OSGi</version>
   <name>HBase</name>
   <description>
     HBase is the &amp;lt;a href="http://hadoop.apache.org"&amp;rt;Hadoop&lt;/a&amp;rt; database. Use it when you need
@@ -566,6 +566,30 @@
     </testResources>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.3.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Embed-Dependency>
+                protobuf-java
+            </Embed-Dependency>
+            <Export-Package>org.apache.hadoop.hbase.*;version="0.94.24.OSGi"</Export-Package>
+            <Import-Package>
+              *;resolution:=optional,
+              org.apache.hadoop.io.serializer;resolution:=optional,
+              org.apache.hadoop.security.authorize;resolution:=optional,
+              com.salesforce.phoenix.coprocessor;resolution:=optional,
+            </Import-Package>
+            <Bundle-Version>0.94.24.OSGi</Bundle-Version>
+            <Bundle-Description>HBase 0.94.24 OSGi bundle</Bundle-Description>
+            <Bundle-Name>hbase-0.94.24-OSGi</Bundle-Name>
+            <Bundle-SymbolicName>org.apache.hbase</Bundle-SymbolicName>
+          </instructions>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
