@@ -10,3 +10,7 @@
 *.iml
 *.orig
 *~
+
+*.ipr
+*.iws
+
