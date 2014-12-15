@@ -686,6 +686,41 @@ public class TableMapReduceUtil {
   }
 
   /**
+   * Return a list of classes that the job requires.
+   * Allows client to use a custom jar finder.
+   */
+  public static Class[] getJobClasses(Job job) throws IOException {
+    try {
+      return new Class[] {
+        org.apache.zookeeper.ZooKeeper.class,
+        com.google.protobuf.Message.class,
+        com.google.common.collect.ImmutableSet.class,
+        org.apache.hadoop.hbase.util.Bytes.class, //one class from hbase.jar
+        job.getMapOutputKeyClass(),
+        job.getMapOutputValueClass(),
+        job.getInputFormatClass(),
+        job.getOutputKeyClass(),
+        job.getOutputValueClass(),
+        job.getOutputFormatClass(),
+        job.getPartitionerClass(),
+        job.getCombinerClass()
+      };
+    } catch (ClassNotFoundException e) {
+      throw new IOException(e);
+    }
+  }
+
+  /**
+   * Add found jars to configuration for distribution.
+   */
+  public static void addDependencyJars(Configuration conf, Set<String> jars) {
+    // Add jars that are already in the tmpjars variable
+    jars.addAll(conf.getStringCollection("tmpjars"));
+    conf.set("tmpjars",
+             StringUtils.arrayToString(jars.toArray(new String[0])));
+  }
+
+  /**
    * Add the HBase dependency jars as well as jars for any of the configured
    * job classes to the job configuration, so that JobClient will ship them
    * to the cluster and add them to the DistributedCache.
