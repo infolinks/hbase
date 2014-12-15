@@ -849,10 +849,7 @@ public class HbaseObjectWritable implements Writable, WritableWithSize, Configur
     if(conf != null) {
       return conf.getClassByName(className);
     }
-    ClassLoader cl = Thread.currentThread().getContextClassLoader();
-    if(cl == null) {
-      cl = HbaseObjectWritable.class.getClassLoader();
-    }
+    ClassLoader cl = HbaseObjectWritable.class.getClassLoader();
     return Class.forName(className, true, cl);
   }
 
