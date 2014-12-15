@@ -205,7 +205,14 @@ public final class Compression {
           return (CompressionCodec) ReflectionUtils.newInstance(externalCodec,
               conf);
         } catch (ClassNotFoundException e) {
-          throw new RuntimeException(e);
+          LOG.warn("Failed to load snappy codec with system classloader. Try using existing CL.");
+          ClassLoader thisCL = this.getClass().getClassLoader();
+          try {
+            return (CompressionCodec) ReflectionUtils.newInstance(thisCL.loadClass("org.apache.hadoop.io.compress.SnappyCodec"),
+              conf);
+          } catch (ClassNotFoundException e1) {
+            throw new RuntimeException(e1);
+          }
         }
       }
     },
