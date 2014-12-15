@@ -94,6 +94,7 @@ public class HBaseConfiguration extends Configuration {
   }
 
   public static Configuration addHbaseResources(Configuration conf) {
+    conf.setClassLoader(HBaseConfiguration.class.getClassLoader());
     conf.addResource("hbase-default.xml");
     conf.addResource("hbase-site.xml");
 
