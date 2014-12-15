@@ -239,7 +239,6 @@ public final class Compression {
       }
     };
 
-    private final Configuration conf;
     private final String compressName;
   // data input buffer size to absorb small reads from application.
     private static final int DATA_IBUF_SIZE = 1 * 1024;
@@ -247,9 +246,14 @@ public final class Compression {
     private static final int DATA_OBUF_SIZE = 4 * 1024;
 
     Algorithm(String name) {
-      this.conf = new Configuration();
-      this.conf.setBoolean("hadoop.native.lib", true);
       this.compressName = name;
+    }
+
+  //initialize configuration dynamically to avoid stale CL in configuration
+    Configuration createConfiguration() {
+      Configuration conf = new Configuration();
+      conf.setBoolean("hadoop.native.lib", true);
+        return conf;
     }
 
     abstract CompressionCodec getCodec(Configuration conf);
@@ -257,7 +261,7 @@ public final class Compression {
     public InputStream createDecompressionStream(
         InputStream downStream, Decompressor decompressor,
         int downStreamBufferSize) throws IOException {
-      CompressionCodec codec = getCodec(conf);
+      CompressionCodec codec = getCodec(createConfiguration());
       // Set the internal buffer size to read from down stream.
       if (downStreamBufferSize > 0) {
         ((Configurable)codec).getConf().setInt("io.file.buffer.size",
@@ -294,13 +298,13 @@ public final class Compression {
      */
     CompressionOutputStream createPlainCompressionStream(
         OutputStream downStream, Compressor compressor) throws IOException {
-      CompressionCodec codec = getCodec(conf);
+      CompressionCodec codec = getCodec(createConfiguration());
       ((Configurable)codec).getConf().setInt("io.file.buffer.size", 32 * 1024);
       return codec.createOutputStream(downStream, compressor);
     }
 
     public Compressor getCompressor() {
-      CompressionCodec codec = getCodec(conf);
+      CompressionCodec codec = getCodec(createConfiguration());
       if (codec != null) {
         Compressor compressor = CodecPool.getCompressor(codec);
         if (compressor != null) {
@@ -326,7 +330,7 @@ public final class Compression {
     }
 
     public Decompressor getDecompressor() {
-      CompressionCodec codec = getCodec(conf);
+      CompressionCodec codec = getCodec(createConfiguration());
       if (codec != null) {
         Decompressor decompressor = CodecPool.getDecompressor(codec);
         if (decompressor != null) {
