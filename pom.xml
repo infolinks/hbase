@@ -587,6 +587,7 @@
             <Bundle-Description>HBase 0.94.24 OSGi bundle</Bundle-Description>
             <Bundle-Name>hbase-0.94.24-OSGi</Bundle-Name>
             <Bundle-SymbolicName>org.apache.hbase</Bundle-SymbolicName>
+            <Include-Resource>${project.build.outputDirectory}</Include-Resource>
           </instructions>
         </configuration>
       </plugin>
